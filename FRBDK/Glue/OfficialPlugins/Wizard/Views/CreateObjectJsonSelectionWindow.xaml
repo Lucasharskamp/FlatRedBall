@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:localization="clr-namespace:Localization;assembly=Localization"
         xmlns:vms="clr-namespace:OfficialPluginsCore.Wizard.ViewModels"
+        xmlns:controls="clr-namespace:GlueFormsCore.Controls;assembly=GlueFormsCore"
         mc:Ignorable="d"
-        Title="CreateObjectJsonSelectionWindow" Height="350" Width="400">
+        Title="CreateObjectJsonSelectionWindow" Height="350" Width="400"
+        Style="{Binding Source={x:Static controls:MainPanelControl.CustomWindowStyle}}">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>

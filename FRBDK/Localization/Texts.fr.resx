@@ -2414,4 +2414,13 @@
 	<data name="FailedToSetGameEditModeToX" xml:space="preserve">
 		<value>Échec de la définition du mode jeu/édition sur {0}</value>
 	</data>
+	<data name="ProjectsFrbRecent" xml:space="preserve">
+		<value>Projets récents de FlatRedBall</value>
+	</data>
+	<data name="ItemsOrphaned" xml:space="preserve">
+		<value>Objets orphelins</value>
+	</data>
+	<data name="TextureCoordinateSelection" xml:space="preserve">
+		<value>Sélection des coordonnées de texture</value>
+	</data>
 </root>

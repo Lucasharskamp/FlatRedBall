@@ -7,20 +7,16 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              PreviewKeyDown="UserControl_PreviewKeyDown"
-             MouseDown="UserControl_MouseDown"
-             >
+             MouseDown="UserControl_MouseDown">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!--<ResourceDictionary Source="/Themes/Dark.xaml" />-->
-                <ResourceDictionary Source="/Themes/Light.xaml" />
+                <ResourceDictionary Source="/Themes/Themes/ColorDictionaries/SoftDark.xaml"/>
+                <ResourceDictionary Source="/Themes/Themes/ControlColors.xaml"/>
+                <ResourceDictionary Source="/Themes/Themes/Controls.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-
-
-
-
     <Grid>
         
         <Grid.RowDefinitions>

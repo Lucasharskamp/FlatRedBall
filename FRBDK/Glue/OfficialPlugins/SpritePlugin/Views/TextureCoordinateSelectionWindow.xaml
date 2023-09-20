@@ -5,15 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OfficialPlugins.SpritePlugin.Views"
         xmlns:localization="clr-namespace:Localization;assembly=Localization"
+        xmlns:controls="clr-namespace:GlueFormsCore.Controls;assembly=GlueFormsCore"
         mc:Ignorable="d"
-        Title="Texture Coordinate Selection" 
+        Title="{x:Static localization:Texts.TextureCoordinateSelection}" 
         WindowStartupLocation="Manual"
         Loaded="Window_Loaded"
         Height="{Binding WindowHeight, Mode=TwoWay}" 
         Width="{Binding WindowWidth, Mode=TwoWay}"
         Left="{Binding WindowX, Mode=TwoWay}"
         Top="{Binding WindowY, Mode=TwoWay}"
-        >
+        Style="{Binding Source={x:Static controls:MainPanelControl.CustomWindowStyle}}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>

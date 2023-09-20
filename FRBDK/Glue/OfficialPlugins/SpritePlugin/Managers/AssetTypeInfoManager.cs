@@ -115,7 +115,7 @@ namespace OfficialPlugins.SpritePlugin.Managers
                 var greenInt = MathFunctions.RoundToInt(green);
                 var blueInt = MathFunctions.RoundToInt(blue);
 
-                // source: https://stackoverflow.com/questions/39137486/converting-colour-name-to-hex-in-c-sharp
+                // source: https://stackoverflow.com/questions/39137486/converting-Color-name-to-hex-in-c-sharp
                 var hexValue = $"{redInt:X2}{greenInt:X2}{blueInt:X2}";
                 return hexValue;
             }

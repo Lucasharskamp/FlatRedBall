@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:localization="clr-namespace:Localization;assembly=Localization"
+        xmlns:controls="clr-namespace:GlueFormsCore.Controls"
         mc:Ignorable="d"
         Title="{x:Static localization:Texts.ObjectNew}" Width="400" Height="500"
-        >
+        Style="{Binding Source={x:Static controls:MainPanelControl.CustomWindowStyle}}">
 
 
     <Grid Margin="8">

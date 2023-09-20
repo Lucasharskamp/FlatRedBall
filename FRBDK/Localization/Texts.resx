@@ -2414,4 +2414,13 @@
 	<data name="FailedToSetGameEditModeToX" xml:space="preserve">
 		<value>Failed to set game/edit mode to {0}</value>
 	</data>
+	<data name="ProjectsFrbRecent" xml:space="preserve">
+		<value>Recent FlatRedBall Projects</value>
+	</data>
+	<data name="ItemsOrphaned" xml:space="preserve">
+		<value>Orphaned items</value>
+	</data>
+	<data name="TextureCoordinateSelection" xml:space="preserve">
+		<value>Texture Coordinate Selection</value>
+	</data>
 </root>

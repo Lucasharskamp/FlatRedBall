@@ -702,6 +702,44 @@
 		<Page Update="Controls\ActivitySpinner.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 		</Page>
+		<Page Update="Themes\Themes\ColorDictionaries\DarkGreyTheme.xaml">
+		  <Generator></Generator>
+		  <CustomToolNamespace>XamlIntelliSenseFileGenerator</CustomToolNamespace>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Page>
+		<Page Update="Themes\Themes\ColorDictionaries\DeepDark.xaml">
+		  <Generator></Generator>
+		  <CustomToolNamespace>XamlIntelliSenseFileGenerator</CustomToolNamespace>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Page>
+		<Page Update="Themes\Themes\ColorDictionaries\GreyTheme.xaml">
+		  <Generator></Generator>
+		  <CustomToolNamespace>XamlIntelliSenseFileGenerator</CustomToolNamespace>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Page>
+		<Page Update="Themes\Themes\ColorDictionaries\LightTheme.xaml">
+		  <Generator></Generator>
+		  <CustomToolNamespace>XamlIntelliSenseFileGenerator</CustomToolNamespace>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Page>
+		<Page Update="Themes\Themes\ColorDictionaries\RedBlackTheme.xaml">
+		  <Generator></Generator>
+		  <CustomToolNamespace>XamlIntelliSenseFileGenerator</CustomToolNamespace>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Page>
+		<Page Update="Themes\Themes\ColorDictionaries\SoftDark.xaml">
+		  <Generator></Generator>
+		  <CustomToolNamespace>XamlIntelliSenseFileGenerator</CustomToolNamespace>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Page>
+		<Page Update="Themes\Themes\ControlColors.xaml">
+		  <Generator>XamlIntelliSenseFileGenerator</Generator>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Page>
+		<Page Update="Themes\Themes\Controls.xaml">
+		  <Generator>XamlIntelliSenseFileGenerator</Generator>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Page>
 	</ItemGroup>
 
 

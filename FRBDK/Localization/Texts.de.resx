@@ -2414,4 +2414,13 @@
 	<data name="FailedToSetGameEditModeToX" xml:space="preserve">
 		<value>Der Spiel-/Bearbeitungsmodus konnte nicht auf {0} gesetzt werden.</value>
 	</data>
+	<data name="ProjectsFrbRecent" xml:space="preserve">
+		<value>Aktuelle FlatRedBall-Projekte</value>
+	</data>
+	<data name="ItemsOrphaned" xml:space="preserve">
+		<value>Verwaiste Gegenstände</value>
+	</data>
+	<data name="TextureCoordinateSelection" xml:space="preserve">
+		<value>Auswahl der Texturkoordinaten</value>
+	</data>
 </root>

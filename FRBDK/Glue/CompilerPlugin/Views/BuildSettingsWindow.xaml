@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:wpfdataui="clr-namespace:WpfDataUi;assembly=WpfDataUiCore"
         xmlns:localization="clr-namespace:Localization;assembly=Localization"
+        xmlns:controls="clr-namespace:GlueFormsCore.Controls;assembly=GlueFormsCore"
+        Style="{Binding Source={x:Static controls:MainPanelControl.CustomWindowStyle}}"
         mc:Ignorable="d"
         Title="{x:Static localization:Texts.BuildSettings}" Height="450" Width="800">
     <Grid>

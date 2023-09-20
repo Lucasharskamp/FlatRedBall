@@ -7,7 +7,8 @@
         xmlns:controls="clr-namespace:GlueFormsCore.Controls"
         xmlns:localization="clr-namespace:Localization;assembly=Localization"
         mc:Ignorable="d"
-        Title="Recent FlatRedBall Projects" Height="450" Width="660">
+        Title="{x:Static localization:Texts.ProjectsFrbRecent}" Height="450" Width="660"
+        Style="{Binding Source={x:Static controls:MainPanelControl.CustomWindowStyle}}">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>

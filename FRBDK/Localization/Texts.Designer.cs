@@ -3841,6 +3841,15 @@ namespace Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Orphaned items.
+        /// </summary>
+        public static string ItemsOrphaned {
+            get {
+                return ResourceManager.GetString("ItemsOrphaned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Jumping.
         /// </summary>
         public static string Jumping {
@@ -5362,6 +5371,15 @@ namespace Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Recent FlatRedBall Projects.
+        /// </summary>
+        public static string ProjectsFrbRecent {
+            get {
+                return ResourceManager.GetString("ProjectsFrbRecent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Copy Entire Project tab.
         /// </summary>
         public static string ProjectShowCopyEntireTab {
@@ -6303,6 +6321,15 @@ namespace Localization {
         public static string Text {
             get {
                 return ResourceManager.GetString("Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string TextureCoordinateSelection {
+            get {
+                return ResourceManager.GetString("TextureCoordinateSelection", resourceCulture);
             }
         }
         

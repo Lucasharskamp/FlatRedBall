@@ -6,7 +6,11 @@
              mc:Ignorable="d" 
              xmlns:local="clr-namespace:FlatRedBall.Glue.Controls.ProjectSync"
              xmlns:thisPlugin="clr-namespace:FlatRedBall.Glue.Plugins.EmbeddedPlugins.SyncedProjects"
-             Width="300" Height="300" Title="Orphaned Items">
+             xmlns:controls="clr-namespace:GlueFormsCore.Controls"
+             xmlns:localization="clr-namespace:Localization;assembly=Localization"
+             Width="300" Height="300" 
+             Title="{x:Static localization:Texts.ItemsOrphaned}"
+             Style="{Binding Source={x:Static controls:MainPanelControl.CustomWindowStyle}}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>

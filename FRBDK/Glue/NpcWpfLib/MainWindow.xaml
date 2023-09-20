@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:localization="clr-namespace:Localization;assembly=Localization"
         mc:Ignorable="d"
-        Title="{x:Static localization:Texts.ProjectNew}" ResizeMode="CanResizeWithGrip"  SizeToContent="Height" Width="400">
+        Title="{x:Static localization:Texts.ProjectNew}" ResizeMode="CanResizeWithGrip"  
+        SizeToContent="Height"
+        Width="400" >
     <Window.Resources>
         <Style x:Key="myStyle" TargetType="Button">
             <Setter Property="Background" Value="#71AA34" />
