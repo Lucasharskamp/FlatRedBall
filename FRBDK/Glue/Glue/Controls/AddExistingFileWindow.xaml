@@ -4,13 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:localization="clr-namespace:Localization;assembly=Localization"
-             xmlns:controls="clr-namespace:GlueFormsCore.Controls"
              WindowStartupLocation="Manual"
              mc:Ignorable="d" 
              WindowStyle="ToolWindow" 
              ResizeMode="CanResizeWithGrip"
-             Height="320" Width="450"
-             Style="{Binding Source={x:Static controls:MainPanelControl.CustomWindowStyle}}">
+             Height="320" Width="450">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>

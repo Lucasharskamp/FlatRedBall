@@ -55,8 +55,6 @@ public partial class MainPanelControl : UserControl
         get => ResourceDictionary.MergedDictionaries[2];
         set => ResourceDictionary.MergedDictionaries[2] = value;
     }
-
-    public static Style CustomWindowStyle { get; private set; }
     #endregion
     public static bool IsExiting { get; private set; }
 
@@ -274,8 +272,6 @@ public partial class MainPanelControl : UserControl
         //   ControlColors = new ResourceDictionary() { Source = new Uri("Themes/Themes/ControlColors.xaml", UriKind.Relative) };
         //   Controls = new ResourceDictionary() { Source = new Uri("Themes/Themes/Controls.xaml", UriKind.Relative) };
         ResourceDictionary = Resources;
-
-        CustomWindowStyle = (Style)ThemeDictionary["CustomWindowStyle"];
     }
 
     public static void SetTheme(ThemeType theme)

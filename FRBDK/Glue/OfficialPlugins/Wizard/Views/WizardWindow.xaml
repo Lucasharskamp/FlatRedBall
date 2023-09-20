@@ -5,11 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OfficialPluginsCore.Wizard.Views"
         xmlns:localization="clr-namespace:Localization;assembly=Localization"
-        xmlns:controls="clr-namespace:GlueFormsCore.Controls;assembly=GlueFormsCore"
         mc:Ignorable="d"
         Title="{x:Static localization:Texts.WizardProjectStart}" Height="620" Width="640"
-        PreviewKeyDown="Window_PreviewKeyDown"
-        Style="{Binding Source={x:Static controls:MainPanelControl.CustomWindowStyle}}">
+        PreviewKeyDown="Window_PreviewKeyDown">
     <Grid Margin="16">
         <local:DownloadingProgress x:Name="PleaseWaitGrid" Visibility="Collapsed">
             

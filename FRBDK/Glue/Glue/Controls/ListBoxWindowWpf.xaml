@@ -6,8 +6,7 @@
         xmlns:local="clr-namespace:GlueFormsCore.Controls"
         xmlns:localization="clr-namespace:Localization;assembly=Localization"
         mc:Ignorable="d"
-        Title="" SizeToContent="Height" Width="400"
-        Style="{Binding Source={x:Static local:MainPanelControl.CustomWindowStyle}}">
+        Title="" SizeToContent="Height" Width="400">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>

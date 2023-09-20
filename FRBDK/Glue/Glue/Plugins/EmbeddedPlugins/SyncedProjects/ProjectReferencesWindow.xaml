@@ -9,8 +9,7 @@
              xmlns:controls="clr-namespace:GlueFormsCore.Controls"
              xmlns:localization="clr-namespace:Localization;assembly=Localization"
              Width="300" Height="300" 
-             Title="{x:Static localization:Texts.ItemsOrphaned}"
-             Style="{Binding Source={x:Static controls:MainPanelControl.CustomWindowStyle}}">
+             Title="{x:Static localization:Texts.ItemsOrphaned}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>

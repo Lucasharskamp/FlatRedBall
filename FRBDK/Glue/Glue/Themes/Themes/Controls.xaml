@@ -1376,6 +1376,7 @@
                         <Setter Property="Foreground" Value="{DynamicResource ABrush.Foreground.Disabled}"/>
                     </Trigger>
                     <Trigger Property="IsEnabled" Value="true">
+                        <Setter Property="Foreground" Value="{DynamicResource ABrush.Foreground.Static}"/>
                         <Setter Property="Cursor" Value="Hand"/>
                     </Trigger>
                 </Style.Triggers>
@@ -4432,7 +4433,7 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    <Style x:Key="CustomWindowStyle" TargetType="{x:Type Window}">
+    <Style TargetType="{x:Type Window}">
         <Setter Property="Background" Value="{DynamicResource Window.Static.Background}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Window.Static.Border}"/>
         <Setter Property="Foreground" Value="{DynamicResource Window.Static.Foreground}"/>

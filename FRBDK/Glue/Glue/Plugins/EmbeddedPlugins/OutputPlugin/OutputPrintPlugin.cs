@@ -2,37 +2,36 @@
 using FlatRedBall.Glue.Plugins.EmbeddedPlugins.OutputPlugin;
 using L = Localization;
 
-namespace FlatRedBall.Glue.Plugins.EmbeddedPlugins
+namespace FlatRedBall.Glue.Plugins.EmbeddedPlugins;
+
+[Export(typeof(PluginBase))]
+public class OutputPrintPlugin : EmbeddedPlugin
 {
-    [Export(typeof(PluginBase))]
-    public class OutputPrintPlugin : EmbeddedPlugin
+    private OutputControl _outputControl; // This is the control we created
+
+    public override void StartUp()
     {
-        OutputControl outputControl; // This is the control we created
+        _outputControl = new OutputControl();
+        var tab = base.CreateAndAddTab(_outputControl, L.Texts.Output, TabLocation.Bottom);
 
-        public override void StartUp()
+        this.OnOutputHandler += OnOutput;
+        this.OnErrorOutputHandler += OnErrorOutput;
+    }
+
+
+    public void OnOutput(string output)
+    {
+        if (!string.IsNullOrWhiteSpace(output))
         {
-            outputControl = new OutputControl();
-            var tab = base.CreateAndAddTab(outputControl, L.Texts.Output, TabLocation.Bottom);
-
-            this.OnOutputHandler += OnOutput;
-            this.OnErrorOutputHandler += OnErrorOutput;
+            _outputControl.OnOutput(output);
         }
+    }
 
-
-        public void OnOutput(string output)
+    public void OnErrorOutput(string output)
+    {
+        if (!string.IsNullOrWhiteSpace(output))
         {
-            if (!string.IsNullOrWhiteSpace(output))
-            {
-                outputControl.OnOutput(output);
-            }
-        }
-
-        public void OnErrorOutput(string output)
-        {
-            if (!string.IsNullOrWhiteSpace(output))
-            {
-                outputControl?.OnErrorOutput(output);
-            }
+            _outputControl?.OnErrorOutput(output);
         }
     }
 }

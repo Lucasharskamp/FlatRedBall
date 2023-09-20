@@ -4,10 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:localization="clr-namespace:Localization;assembly=Localization"
-             xmlns:controls="clr-namespace:GlueFormsCore.Controls"
              mc:Ignorable="d" 
-             Width="500" SizeToContent="Height"
-             Style="{Binding Source={x:Static controls:MainPanelControl.CustomWindowStyle}}">
+             Width="500" SizeToContent="Height">
     <Grid>
         <StackPanel x:Name="MainPanel">
             <TextBlock TextWrapping="Wrap" x:Name="LabelInstance" Margin="8,8,8,15" 
