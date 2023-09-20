@@ -2434,16 +2434,11 @@ namespace FlatRedBall.Glue.CodeGeneration
             // anymore.  Moved back down to its old position.
             for (int i = 0; i < namedObject.VariablesToReset.Count; i++)
             {
-                string variableToReset = namedObject.VariablesToReset[i];
-
-
                 string relativeVersion = InstructionManager.GetRelativeForAbsolute(namedObject.VariablesToReset[i]);
-
 
                 if ((namedObject.SourceType == SourceType.Entity || ati.ShouldAttach) && !string.IsNullOrEmpty(relativeVersion))
                 {
                     codeBlock = codeBlock.If(namedObject.InstanceName + ".Parent == null");
-
                 }
 
                 codeBlock.Line(namedObject.InstanceName + "." + namedObject.VariablesToReset[i] + " = " +

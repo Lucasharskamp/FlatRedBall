@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading;
 using FlatRedBall.IO;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace FlatRedBall
 {
@@ -31,25 +31,22 @@ namespace FlatRedBall
         public string Name;
         public double Time;
 
-        public override string ToString()
-        {
-            return Name + ": " + Time;
-        }
+        public override string ToString() => $"{Name}: {Time}";
     }
 
-    struct TimedTasks
+    internal struct TimedTasks
     {
         public double Time;
         public TaskCompletionSource<object> TaskCompletionSource;
     }
 
-    struct PredicateTask
+    internal struct PredicateTask
     {
         public Func<bool> Predicate;
         public TaskCompletionSource<object> TaskCompletionSource;
     }
 
-    struct FrameTask
+    internal struct FrameTask
     {
         public int FrameIndex;
         public TaskCompletionSource<object> TaskCompletionSource;
@@ -72,10 +69,6 @@ namespace FlatRedBall
 
         #region Fields
 
-        static float mSecondDifference;
-        static float mLastSecondDifference;
-        static float mSecondDifferenceSquaredDividedByTwo;
-
         /// <summary>
         /// The amount of time in seconds since the game started running. 
         /// This value is updated once-per-frame so it will 
@@ -88,51 +81,42 @@ namespace FlatRedBall
         public static double CurrentTime;
         public static int CurrentFrame;
 
-        static double mLastCurrentTime;
+        private static double _mCurrentTimeForTimedSections;
 
-        static double mTimeFactor = 1.0f;
+        private static readonly Lazy<System.Diagnostics.Stopwatch> StopWatch = new Lazy<Stopwatch>(() =>
+        {
+            _stringBuilder = new StringBuilder(200);
+            // This may be initialized outside of FRB if the user is trying to time pre-FRB calls
+            var newStopWatch = new System.Diagnostics.Stopwatch();
+            newStopWatch.Start();
+            return newStopWatch;
+        });
 
-        static double mCurrentTimeForTimedSections;
+        private static readonly List<double> Sections = new List<double>();
+        private static readonly List<string> SectionLabels = new List<string>();
 
-        static System.Diagnostics.Stopwatch stopWatch;
+        private static readonly List<double> LastSections = new List<double>();
+        private static readonly List<string> LastSectionLabels = new List<string>();
 
-        static List<double> sections = new List<double>();
-        static List<string> sectionLabels = new List<string>();
+        private static readonly Dictionary<string, double> MPersistentSections = new Dictionary<string, double>();
+        private static double _mLastPersistentTime;
 
-        static List<double> lastSections = new List<double>();
-        static List<string> lastSectionLabels = new List<string>();
+        private static readonly Dictionary<string, double> MSumSections = new Dictionary<string, double>();
+        private static double _mLastSumTime;
 
-        static Dictionary<string, double> mPersistentSections = new Dictionary<string, double>();
-        static double mLastPersistentTime;
+        private static StringBuilder _stringBuilder;
 
-        static Dictionary<string, double> mSumSections = new Dictionary<string, double>();
-        static Dictionary<string, int> mSumSectionHitCount = new Dictionary<string, int>();
-        static double mLastSumTime;
+        private static bool _mIsPersistentTiming = false;
 
-        static StringBuilder stringBuilder;
-
-        static bool mTimeSectionsEnabled = true;
-
-        static bool mIsPersistentTiming = false;
-
-        static GameTime mLastUpdateGameTime;
-
-		static TimeMeasurementUnit mTimedSectionReportngUnit = TimeMeasurementUnit.Millisecond;
-
-		static float mMaxFrameTime = 0.5f;
-
-        static readonly List<TimedTasks> screenTimeDelayedTasks = new List<TimedTasks>();
-        static readonly List<PredicateTask> predicateTasks = new List<PredicateTask>();
-        static readonly List<FrameTask> frameTasks = new List<FrameTask>();
+        private static readonly List<TimedTasks> ScreenTimeDelayedTasks = new List<TimedTasks>();
+        private static readonly List<PredicateTask> PredicateTasks = new List<PredicateTask>();
+        private static readonly List<FrameTask> FrameTasks = new List<FrameTask>();
 
         #endregion
 
         #region Properties
 
-        public static double LastCurrentTime
-        {
-            get { return mLastCurrentTime; }
-        }
+        public static double LastCurrentTime { get; private set; }
 
         /// <summary>
         /// The number of seconds (usually a fraction of a second) since
@@ -140,26 +124,13 @@ namespace FlatRedBall
         /// This value is changed once per frame, and will remain constant within each frame, assuming a consant TimeFactor.
         /// Changing the TimeFactor adjusts this value.
         /// </summary>
-        public static float SecondDifference
-        {
-            get { return mSecondDifference; }
-        }
+        public static float SecondDifference { get; private set; }
 
-        public static float LastSecondDifference
-        {
-            get { return mLastSecondDifference; }
-        }
+        public static float LastSecondDifference { get; private set; }
 
-        public static float SecondDifferenceSquaredDividedByTwo
-        {
-            get { return mSecondDifferenceSquaredDividedByTwo; }
-        }
+        public static float SecondDifferenceSquaredDividedByTwo { get; private set; }
 
-        public static bool TimeSectionsEnabled
-        {
-            get { return mTimeSectionsEnabled; }
-            set { mTimeSectionsEnabled = value; }
-        }
+        public static bool TimeSectionsEnabled { get; set; } = true;
 
         /// <summary>
         /// A multiplier for how fast time runs.  This is 1 by default.  Setting
@@ -167,28 +138,13 @@ namespace FlatRedBall
         /// effectively increases the SecondDifference value, so custom code which is time-based
         /// will behave properly when TimeFactor is adjusted.
         /// </summary>
-        public static double TimeFactor
-        {
-            get { return mTimeFactor; }
-            set { mTimeFactor = value; }
-        }
+        public static double TimeFactor { get; set; } = 1.0f;
 
-        public static GameTime LastUpdateGameTime
-        {
-            get { return mLastUpdateGameTime; }
-        }
+        public static GameTime LastUpdateGameTime { get; private set; }
 
-		public static TimeMeasurementUnit TimedSectionReportingUnit
-        {
-            get { return mTimedSectionReportngUnit; }
-            set { mTimedSectionReportngUnit = value; }
-        }
+        public static TimeMeasurementUnit TimedSectionReportingUnit { get; set; } = TimeMeasurementUnit.Millisecond;
 
-		public static float MaxFrameTime
-		{
-			get { return mMaxFrameTime; }
-			set { mMaxFrameTime = value; }
-		}
+        public static float MaxFrameTime { get; set; } = 0.5f;
 
         /// <summary>
         /// Returns the amount of time since the current screen started. This value does not 
@@ -200,35 +156,15 @@ namespace FlatRedBall
         /// </remarks>
         public static double CurrentScreenTime => Screens.ScreenManager.CurrentScreen.PauseAdjustedCurrentTime;
 
-        public static Dictionary<string, double> SumSectionDictionary
-        {
-            get { return mSumSections; }
-        }
-
         [Obsolete("Use CurrentSystemTime as that name is more consistent and this will eventually be removed.")]
-        public static double SystemCurrentTime
-        {
-            get 
-            { 
-                return stopWatch.Elapsed.TotalSeconds; 
-            }
+        public static double SystemCurrentTime => StopWatch.Value.Elapsed.TotalSeconds;
 
-        }
-
-        public static double CurrentSystemTime => stopWatch.Elapsed.TotalSeconds; 
+        public static double CurrentSystemTime => StopWatch.Value.Elapsed.TotalSeconds; 
 
 
-        public static int TimedSectionCount
-        {
-            get { return sections.Count; }
-        }
+        public static int TimedSectionCount => Sections.Count;
 
-        public static bool SetNextFrameTimeTo0
-        {
-            get; set;
-        }
-
-
+        public static bool SetNextFrameTimeTo0 { get; set; }
 
         #endregion
 
@@ -236,49 +172,19 @@ namespace FlatRedBall
 
         public static void CreateXmlSumTimeSectionReport(string fileName)
         {
-            List<TimedSection> tempList = GetTimedSectionList();
+            var tempList = GetTimedSectionList();
 
-            FileManager.XmlSerialize<List<TimedSection>>(tempList, fileName);
+            FileManager.XmlSerialize(tempList, fileName);
         }
 
         public static List<TimedSection> GetTimedSectionList()
         {
-            List<TimedSection> tempList = new List<TimedSection>(
-                mSumSections.Count);
+           var tempList = new List<TimedSection>(MSumSections.Count);
+           tempList.AddRange(MSumSections.Select(kvp => new TimedSection() { Name = kvp.Key, Time = kvp.Value }));
 
-            foreach (KeyValuePair<string, double> kvp in mSumSections)
-            {
-                TimedSection timedSection = new TimedSection()
-                {
-                    Name = kvp.Key,
-                    Time = kvp.Value
-                };
-
-                tempList.Add(timedSection);
-            }
-            return tempList;
+           return tempList;
         }
 
-        /// <summary>
-        /// Allows the game component to perform any initialization it needs to before starting
-        /// to run.  This is where it can query for any required services and load content.
-        /// </summary>
-        public static void Initialize()
-        {
-            stringBuilder = new StringBuilder(200);
-
-            InitializeStopwatch();
-        }
-
-        public static void InitializeStopwatch()
-        {
-            if(stopWatch == null)
-            {
-                // This may be initialized outside of FRB if the user is trying to time pre-FRB calls
-                stopWatch = new System.Diagnostics.Stopwatch();
-                stopWatch.Start();
-            }
-        }
 
         #region TimeSection code
 
@@ -287,12 +193,12 @@ namespace FlatRedBall
 
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-            foreach (KeyValuePair<string, double> kvp in mPersistentSections)
+            foreach (KeyValuePair<string, double> kvp in MPersistentSections)
             {
                 sb.Append(kvp.Key).Append(": ").AppendLine(kvp.Value.ToString());
             }
 
-            mIsPersistentTiming = false;
+            _mIsPersistentTiming = false;
 
             return sb.ToString();
         }
@@ -302,7 +208,7 @@ namespace FlatRedBall
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-            foreach (KeyValuePair<string, double> kvp in mSumSections)
+            foreach (KeyValuePair<string, double> kvp in MSumSections)
             {
 				if (TimedSectionReportingUnit == TimeMeasurementUnit.Millisecond)
 				{
@@ -320,69 +226,69 @@ namespace FlatRedBall
 
         public static string GetTimedSections(bool showTotal)
         {
-            stringBuilder.Remove(0, stringBuilder.Length);
+            _stringBuilder.Remove(0, _stringBuilder.Length);
 
             int largestIndex = -1;
             double longestTime = -1;
 
-            for (int i = 0; i < lastSections.Count; i++)
+            for (int i = 0; i < LastSections.Count; i++)
             {
-                if (lastSections[i] > longestTime)
+                if (LastSections[i] > longestTime)
                 {
-                    longestTime = lastSections[i];
+                    longestTime = LastSections[i];
                     largestIndex = i;
                 }
             }
 
-            for (int i = 0; i < lastSections.Count; i++)
+            for (int i = 0; i < LastSections.Count; i++)
             {
                 if (i == largestIndex)
                 {
-					if (lastSectionLabels[i] != "")
+					if (LastSectionLabels[i] != "")
 					{
 						if (TimedSectionReportingUnit == TimeMeasurementUnit.Millisecond)
 						{
-							stringBuilder.Append("-!-" + lastSectionLabels[i]).Append(": ").Append(lastSections[i].ToString("f2")).Append("\n");
+							_stringBuilder.Append("-!-" + LastSectionLabels[i]).Append(": ").Append(LastSections[i].ToString("f2")).Append("\n");
 						}
 						else
 						{
-							stringBuilder.Append("-!-" + lastSectionLabels[i]).Append(": ").Append(lastSections[i].ToString()).Append("\n");
+							_stringBuilder.Append("-!-" + LastSectionLabels[i]).Append(": ").Append(LastSections[i].ToString()).Append("\n");
 						}
 					}
 					else
 					{
 						if (TimedSectionReportingUnit == TimeMeasurementUnit.Millisecond)
 						{
-							stringBuilder.Append("-!-" + lastSections[i].ToString("f2")).Append("\n");
+							_stringBuilder.Append("-!-" + LastSections[i].ToString("f2")).Append("\n");
 						}
 						else
 						{
-							stringBuilder.Append("-!-" + lastSections[i].ToString()).Append("\n");
+							_stringBuilder.Append("-!-" + LastSections[i].ToString()).Append("\n");
 						}
 					}
                 }
                 else
                 {
-					if (lastSectionLabels[i] != "")
+					if (LastSectionLabels[i] != "")
 					{
 						if (TimedSectionReportingUnit == TimeMeasurementUnit.Millisecond)
 						{
-							stringBuilder.Append(lastSectionLabels[i]).Append(": ").Append(lastSections[i].ToString("f2")).Append("\n");
+							_stringBuilder.Append(LastSectionLabels[i]).Append(": ").Append(LastSections[i].ToString("f2")).Append("\n");
 						}
 						else
 						{
-							stringBuilder.Append(lastSectionLabels[i]).Append(": ").Append(lastSections[i].ToString()).Append("\n");
+							_stringBuilder.Append(LastSectionLabels[i]).Append(": ").Append(LastSections[i].ToString()).Append("\n");
 						}
 					}
 					else
 					{
 						if (TimedSectionReportingUnit == TimeMeasurementUnit.Millisecond)
 						{
-							stringBuilder.Append(lastSections[i].ToString("f2")).Append("\n");
+							_stringBuilder.Append(LastSections[i].ToString("f2")).Append("\n");
 						}
 						else
 						{
-							stringBuilder.Append(lastSections[i].ToString()).Append("\n");
+							_stringBuilder.Append(LastSections[i].ToString()).Append("\n");
 						}
 					}
                 }
@@ -392,48 +298,48 @@ namespace FlatRedBall
 			{
 				if (TimedSectionReportingUnit == TimeMeasurementUnit.Millisecond)
 				{
-					stringBuilder.Append("Total Timed: " + ((TimeManager.CurrentSystemTime - TimeManager.mCurrentTimeForTimedSections) * 1000.0f).ToString("f2"));
+					_stringBuilder.Append("Total Timed: " + ((TimeManager.CurrentSystemTime - TimeManager._mCurrentTimeForTimedSections) * 1000.0f).ToString("f2"));
 				}
 				else
 				{
-					stringBuilder.Append("Total Timed: " + (TimeManager.CurrentSystemTime - TimeManager.mCurrentTimeForTimedSections));
+					_stringBuilder.Append("Total Timed: " + (TimeManager.CurrentSystemTime - TimeManager._mCurrentTimeForTimedSections));
 				}
 			}
 
-            return stringBuilder.ToString();
+            return _stringBuilder.ToString();
 
         }
 
 
         public static void PersistentTimeSection(string label)
         {
-            if (mIsPersistentTiming)
+            if (_mIsPersistentTiming)
             {
                 double currentTime = CurrentSystemTime;
-                if (mPersistentSections.ContainsKey(label))
+                if (MPersistentSections.ContainsKey(label))
                 {
 					if (TimedSectionReportingUnit == TimeMeasurementUnit.Millisecond)
 					{
-						mPersistentSections[label] = ((currentTime - mLastPersistentTime) * 1000.0f);
+						MPersistentSections[label] = ((currentTime - _mLastPersistentTime) * 1000.0f);
 					}
 					else
 					{
-						mPersistentSections[label] = currentTime - mLastPersistentTime;
+						MPersistentSections[label] = currentTime - _mLastPersistentTime;
 					}
                 }
                 else
                 {
 					if (TimedSectionReportingUnit == TimeMeasurementUnit.Millisecond)
 					{
-						mPersistentSections.Add(label, (currentTime - mLastPersistentTime) * 1000.0f);
+						MPersistentSections.Add(label, (currentTime - _mLastPersistentTime) * 1000.0f);
 					}
 					else
 					{
-						mPersistentSections.Add(label, currentTime - mLastPersistentTime);
+						MPersistentSections.Add(label, currentTime - _mLastPersistentTime);
 					}
                 }
 
-                mLastPersistentTime = currentTime;
+                _mLastPersistentTime = currentTime;
             }
         }
 
@@ -441,11 +347,11 @@ namespace FlatRedBall
 
         public static void StartPersistentTiming()
         {
-            mPersistentSections.Clear();
+            MPersistentSections.Clear();
 
-            mIsPersistentTiming = true;
+            _mIsPersistentTiming = true;
 
-            mLastPersistentTime = CurrentSystemTime;
+            _mLastPersistentTime = CurrentSystemTime;
         }
 
         /// <summary>
@@ -473,33 +379,32 @@ namespace FlatRedBall
         /// </remarks>
         public static void StartSumTiming()
         {
-            mSumSections.Clear();
-            mSumSectionHitCount.Clear();
+            MSumSections.Clear();
 
-            mLastSumTime = CurrentSystemTime;
+            _mLastSumTime = CurrentSystemTime;
         }
 
 
         public static void SumTimeSection(string label)
         {
             double currentTime = CurrentSystemTime;
-            if (mSumSections.ContainsKey(label))
+            if (MSumSections.ContainsKey(label))
             {
-                mSumSections[label] += currentTime - mLastSumTime;
+                MSumSections[label] += currentTime - _mLastSumTime;
                 //mSumSectionHitCount[label]++;
             }
             else
             {
-                mSumSections.Add(label, currentTime - mLastSumTime);
+                MSumSections.Add(label, currentTime - _mLastSumTime);
                 //mSumSectionHitCount.Add(label, 1);
             }
-            mLastSumTime = currentTime;
+            _mLastSumTime = currentTime;
         }
 
 
         public static void SumTimeRefresh()
         {
-            mLastSumTime = CurrentSystemTime;
+            _mLastSumTime = CurrentSystemTime;
         }
 
         /// <summary>
@@ -529,24 +434,24 @@ namespace FlatRedBall
         /// <param name="label">The label for the timed section.</param>
         public static void TimeSection(string label)
         {
-            if (mTimeSectionsEnabled)
+            if (TimeSectionsEnabled)
             {
-                Monitor.Enter(sections);
+                Monitor.Enter(Sections);
 
-                double f = (CurrentSystemTime - mCurrentTimeForTimedSections);
+                double f = (CurrentSystemTime - _mCurrentTimeForTimedSections);
                 if (TimedSectionReportingUnit == TimeMeasurementUnit.Millisecond)
                 {
                     f *= 1000.0f;
                 }
 
-                for (int i = sections.Count - 1; i > -1; i--)
-                    f -= sections[i];
+                for (int i = Sections.Count - 1; i > -1; i--)
+                    f -= Sections[i];
 
 
-                sections.Add(f);
-                sectionLabels.Add(label);
+                Sections.Add(f);
+                SectionLabels.Add(label);
 
-                Monitor.Exit(sections);
+                Monitor.Exit(Sections);
             }
         }
 
@@ -594,17 +499,17 @@ namespace FlatRedBall
             var time = CurrentScreenTime + seconds;
             var taskSource = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-            var index = screenTimeDelayedTasks.Count;
-            for(int i = 0; i < screenTimeDelayedTasks.Count; i++)
+            var index = ScreenTimeDelayedTasks.Count;
+            for(var i = 0; i < ScreenTimeDelayedTasks.Count; i++)
             {
-                if (screenTimeDelayedTasks[i].Time > time)
+                if (ScreenTimeDelayedTasks[i].Time > time)
                 {
                     index = i;
                     break;
                 }
             }
 
-            screenTimeDelayedTasks.Insert(index, new TimedTasks { Time = time, TaskCompletionSource = taskSource});
+            ScreenTimeDelayedTasks.Insert(index, new TimedTasks { Time = time, TaskCompletionSource = taskSource});
 
             return taskSource.Task;
         }
@@ -616,7 +521,7 @@ namespace FlatRedBall
                 return Task.CompletedTask;
             }
             var taskSource = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
-            predicateTasks.Add(new PredicateTask { Predicate = predicate, TaskCompletionSource = taskSource });
+            PredicateTasks.Add(new PredicateTask { Predicate = predicate, TaskCompletionSource = taskSource });
             return taskSource.Task;
         }
 
@@ -627,55 +532,57 @@ namespace FlatRedBall
                 return Task.CompletedTask;
             }
             var taskSource = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
-            var index = frameTasks.Count;
+            var index = FrameTasks.Count;
             var absoluteFrame = TimeManager.CurrentFrame + frameCount;
-            for (int i = 0; i < frameTasks.Count; i++)
+            for (var i = 0; i < FrameTasks.Count; i++)
             {
-                if (frameTasks[i].FrameIndex > absoluteFrame)
+                if (FrameTasks[i].FrameIndex > absoluteFrame)
                 {
                     index = i;
                     break;
                 }
             }
-            frameTasks.Insert(index, new FrameTask { FrameIndex = absoluteFrame, TaskCompletionSource = taskSource });
+            FrameTasks.Insert(index, new FrameTask { FrameIndex = absoluteFrame, TaskCompletionSource = taskSource });
             return taskSource.Task;
 
         }
 
-        static bool isFirstUpdate = false;
+        private static bool _isFirstUpdate = false;
         /// <summary>
         /// Performs every-frame logic to update timing values such as CurrentTime and SecondDifference.  If this method is not called, CurrentTime will not advance.
         /// </summary>
         /// <param name="time">The GameTime value provided by the MonoGame Game class.</param>
         public static void Update(GameTime time)
         {
-            mLastUpdateGameTime = time;
+            LastUpdateGameTime = time;
 
-            lastSections.Clear();
-            lastSectionLabels.Clear();
+            LastSections.Clear();
+            LastSectionLabels.Clear();
 
-            for (int i = sections.Count - 1; i > -1; i--)
+            for (int i = Sections.Count - 1; i > -1; i--)
             {
 
-                lastSections.Insert(0, sections[i]);
-                lastSectionLabels.Insert(0, sectionLabels[i]);
+                LastSections.Insert(0, Sections[i]);
+                LastSectionLabels.Insert(0, SectionLabels[i]);
             }
 
-            sections.Clear();
-            sectionLabels.Clear();
+            Sections.Clear();
+            SectionLabels.Clear();
 
-            mLastSecondDifference = mSecondDifference;
-            mLastCurrentTime = CurrentTime;
+            LastSecondDifference = SecondDifference;
+            LastCurrentTime = CurrentTime;
 
             const bool useSystemCurrentTime = false;
 
             double elapsedTime;
 
+            // This exists if we ever add a platform back in (such as how MDX used to be)
+            // which does not have a built-in Game timing mechanism the way XNA does
             if (useSystemCurrentTime)
             {
                 double systemCurrentTime = CurrentSystemTime;
-                elapsedTime = systemCurrentTime - mLastCurrentTime;
-                mLastCurrentTime = systemCurrentTime;
+                elapsedTime = systemCurrentTime - LastCurrentTime;
+                LastCurrentTime = systemCurrentTime;
                 //stop big frame times
                 if (elapsedTime > MaxFrameTime)
                 {
@@ -696,7 +603,7 @@ namespace FlatRedBall
                 }
                 else
                 {
-                    elapsedTime = time.ElapsedGameTime.TotalSeconds * mTimeFactor;
+                    elapsedTime = time.ElapsedGameTime.TotalSeconds * TimeFactor;
                 }
 
                 //stop big frame times
@@ -706,17 +613,17 @@ namespace FlatRedBall
                 }
             }
 
-            mSecondDifference = (float)(elapsedTime);
+            SecondDifference = (float)(elapsedTime);
             CurrentTime += elapsedTime;
 
-            double currentSystemTime = CurrentSystemTime + mSecondDifference;
+            double currentSystemTime = CurrentSystemTime + SecondDifference;
 
-            mSecondDifferenceSquaredDividedByTwo = (mSecondDifference * mSecondDifference) / 2.0f;
-            mCurrentTimeForTimedSections = currentSystemTime;
+            SecondDifferenceSquaredDividedByTwo = (SecondDifference * SecondDifference) / 2.0f;
+            _mCurrentTimeForTimedSections = currentSystemTime;
 
-            if (isFirstUpdate)
+            if (_isFirstUpdate)
             {
-                isFirstUpdate = false;
+                _isFirstUpdate = false;
             }
             else
             {
@@ -728,12 +635,12 @@ namespace FlatRedBall
         {
 
             // Check if any delayed tasks should be completed
-            while (screenTimeDelayedTasks.Count > 0)
+            while (ScreenTimeDelayedTasks.Count > 0)
             {
-                var first = screenTimeDelayedTasks[0];
+                var first = ScreenTimeDelayedTasks[0];
                 if (first.Time <= CurrentScreenTime)
                 {
-                    screenTimeDelayedTasks.RemoveAt(0);
+                    ScreenTimeDelayedTasks.RemoveAt(0);
                     first.TaskCompletionSource.SetResult(null);
                 }
                 else
@@ -745,22 +652,22 @@ namespace FlatRedBall
 
             // Check if any predicate tasks should be completed
             // do a reverse loop, run the predicate, and remove them and set their result to null if the predicate is true
-            for(int i = predicateTasks.Count - 1; i > -1; i--)
+            for(var i = PredicateTasks.Count - 1; i > -1; i--)
             {
-                var predicateTask = predicateTasks[i];
+                var predicateTask = PredicateTasks[i];
                 if(predicateTask.Predicate())
                 {
-                    predicateTasks.RemoveAt(i);
+                    PredicateTasks.RemoveAt(i);
                     predicateTask.TaskCompletionSource.SetResult(null);
                 }
             }
 
-            while(frameTasks.Count > 0)
+            while(FrameTasks.Count > 0)
             {
-                var first = frameTasks[0];
+                var first = FrameTasks[0];
                 if(first.FrameIndex <= CurrentFrame)
                 {
-                    frameTasks.RemoveAt(0);
+                    FrameTasks.RemoveAt(0);
                     first.TaskCompletionSource.SetResult(null);
                 }
                 else
@@ -773,23 +680,23 @@ namespace FlatRedBall
 
         internal static void ClearTasks()
         {
-            foreach (var timedTasks in screenTimeDelayedTasks.ToList())
+            foreach (var timedTasks in ScreenTimeDelayedTasks.ToList())
             {
                 timedTasks.TaskCompletionSource.SetCanceled();
             }
-            screenTimeDelayedTasks.Clear();
+            ScreenTimeDelayedTasks.Clear();
 
-            foreach(var predicateTask in predicateTasks.ToList())
+            foreach(var predicateTask in PredicateTasks.ToList())
             {
                 predicateTask.TaskCompletionSource.SetCanceled();
             }   
-            predicateTasks.Clear();
+            PredicateTasks.Clear();
 
-            foreach(var frameTask in frameTasks.ToList())
+            foreach(var frameTask in FrameTasks.ToList())
             {
                 frameTask.TaskCompletionSource.SetCanceled();
             }
-            frameTasks.Clear();
+            FrameTasks.Clear();
         }
 
         #endregion

@@ -226,10 +226,7 @@ public partial class MainGlueWindow : Form
 
         SetScreenSubMessage(Localization.Texts.InitializingPropertyGrids);
         PropertyGridRightClickHelper.Initialize();
-
-        SetScreenSubMessage(Localization.Texts.InitializingInstructionManager);
-        InstructionManager.Initialize();
-
+        
         SetScreenSubMessage(Localization.Texts.InitializingTypeConverter);        
         TypeConverterHelper.InitializeClasses();
 

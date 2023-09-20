@@ -65,8 +65,6 @@ namespace FlatRedBall.Glue.IO
         
         public async Task LoadProject(string projectFileName, InitializationWindowWpf initializationWindow = null)
         {
-            TimeManager.Initialize();
-            var topSection = Section.GetAndStartContextAndTime("All");
             ////////////////// EARLY OUT!!!!!!!!!
             if (!File.Exists(projectFileName))
             {

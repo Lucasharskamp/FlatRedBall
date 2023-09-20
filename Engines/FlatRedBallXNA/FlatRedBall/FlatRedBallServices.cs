@@ -5,32 +5,18 @@ using FlatRedBall.Graphics;
 using FlatRedBall.Input;
 using FlatRedBall.AI.Pathfinding;
 using FlatRedBall.Math.Geometry;
-
-
-using System.IO;
-
 using FlatRedBall.Graphics.Animation;
 using FlatRedBall.Gui;
-
-using FlatRedBall.Content.AnimationChain;
 using FileManager = FlatRedBall.IO.FileManager;
 using ShapeManager = FlatRedBall.Math.Geometry.ShapeManager;
 
 using FlatRedBall.Content;
 using FlatRedBall.Graphics.Particle;
-using FlatRedBall.Content.Particle;
 using FlatRedBall.Math;
-using FlatRedBall.Content.Polygon;
-using FlatRedBall.IO.Csv;
-
 using Microsoft.Xna.Framework;
 
 
 using Microsoft.Xna.Framework.Graphics;
-
-using Microsoft.Xna.Framework.Content;
-
-
 using Renderer = FlatRedBall.Graphics.Renderer;
 using Effect = Microsoft.Xna.Framework.Graphics.Effect;
 using InstructionManager = FlatRedBall.Instructions.InstructionManager;
@@ -41,7 +27,6 @@ using FlatRedBall.Managers;
 
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using System.Linq;
 
 namespace FlatRedBall
 {
@@ -460,8 +445,6 @@ namespace FlatRedBall
 
 #endif
 
-            InstructionManager.Initialize();
-            TimeManager.Initialize();
             ShapeManager.Initialize();
             InputManager.Initialize(mWindowHandle);
             SpriteManager.Initialize();
@@ -708,8 +691,6 @@ namespace FlatRedBall
             #endregion
 
             #region Initialize the Managers
-            InstructionManager.Initialize();
-            TimeManager.Initialize();
             ShapeManager.Initialize();
 
             Renderer.Initialize(graphics);

@@ -143,22 +143,17 @@ namespace FlatRedBall.Instructions
 
                     bool shouldInterpolate =
                         instructionAtIndexAsGeneric.MemberValueAsObject != null &&
-
-                        instructionAtIndexAsGeneric != null &&
                         InstructionManager.HasInterpolatorForType(
                             instructionAtIndexAsGeneric.MemberValueAsObject.GetType());
 
-                    string velocityMemberName = InstructionManager.GetVelocityForState(
-                        instructionAtIndexAsGeneric.Member);
+                    string velocityMemberName = InstructionManager.GetVelocityForState(instructionAtIndexAsGeneric.Member);
 
                     if (shouldInterpolate && !string.IsNullOrEmpty(velocityMemberName))
                     {
                         Type typeOfValue = instructionAtIndexAsGeneric.MemberValueAsObject.GetType();
                         //bool hasInterpolated = false;
 
-                        GenericInstruction instructionAfterAsGeneric = keyframeAfter[i] as GenericInstruction;
-
-                        if (instructionAfterAsGeneric != null &&
+                        if (keyframeAfter[i] is GenericInstruction instructionAfterAsGeneric &&
                             instructionAtIndexAsGeneric.Target == instructionAfterAsGeneric.Target &&
                             instructionAtIndexAsGeneric.Member == instructionAfterAsGeneric.Member)
                         {
@@ -307,7 +302,6 @@ namespace FlatRedBall.Instructions
 
                     bool shouldInterpolate =
                         instructionBeforeAsGeneric.MemberValueAsObject != null &&
-                        instructionBeforeAsGeneric != null &&
                         InstructionManager.HasInterpolatorForType(
                             instructionBeforeAsGeneric.MemberValueAsObject.GetType());
 
@@ -315,10 +309,7 @@ namespace FlatRedBall.Instructions
                     {
                         bool hasInterpolated = false;
 
-                        GenericInstruction instructionAfterAsGeneric =
-                            keyframeAfter[i] as GenericInstruction;
-
-                        if (instructionAfterAsGeneric != null &&
+                        if (keyframeAfter[i] is GenericInstruction instructionAfterAsGeneric &&
                             instructionBeforeAsGeneric.Target == instructionAfterAsGeneric.Target &&
                             instructionBeforeAsGeneric.Member == instructionAfterAsGeneric.Member)
                         {
