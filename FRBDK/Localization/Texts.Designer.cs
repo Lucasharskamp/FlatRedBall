@@ -4264,15 +4264,6 @@ namespace Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Orphaned items.
-        /// </summary>
-        public static string ItemsOrphaned {
-            get {
-                return ResourceManager.GetString("ItemsOrphaned", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Jumping.
         /// </summary>
         public static string Jumping {
