@@ -367,31 +367,30 @@ public partial class MainTreeViewControl : UserControl
         }
     }
 
-    public object CreateWpfItemFor(GlueFormsCore.FormHelpers.GeneralToolStripMenuItem item)
+    public static object CreateWpfItemFor(GlueFormsCore.FormHelpers.GeneralToolStripMenuItem item)
     {
-        if (item.Text == "-")
+        if (item == null || item.Text == "-")
         {
-            var separator = new Separator();
-            return separator;
+            return new Separator();
         }
-        else
+
+        var menuItem = new MenuItem
         {
-            var menuItem = new MenuItem();
-            menuItem.Icon = item.Image;
-            menuItem.Header = item.Text;
-            menuItem.Click += (not, used) =>
-            {
-                item?.Click?.Invoke(menuItem, null);
-            };
+            Icon = item.Image,
+            Header = item.Text
+        };
+        menuItem.Click += (_, _) =>
+        {
+            item?.Click?.Invoke(menuItem, null);
+        };
 
-            foreach (var child in item.DropDownItems)
-            {
-                var wpfItem = CreateWpfItemFor(child);
-                menuItem.Items.Add(wpfItem);
-            }
-
-            return menuItem;
+        foreach (var child in item.DropDownItems)
+        {
+            var wpfItem = CreateWpfItemFor(child);
+            menuItem.Items.Add(wpfItem);
         }
+
+        return menuItem;
     }
 
     private void MainTreeView_DragLeave(object sender, DragEventArgs e)
@@ -443,13 +442,10 @@ public partial class MainTreeViewControl : UserControl
             if (child != null && child is childItem)
                 return (childItem)child;
 
-            else
-            {
-                childItem childOfChild = FindVisualChild<childItem>(child);
+            childItem childOfChild = FindVisualChild<childItem>(child);
 
-                if (childOfChild != null)
-                    return childOfChild;
-            }
+            if (childOfChild != null)
+                return childOfChild;
         }
 
         return null;

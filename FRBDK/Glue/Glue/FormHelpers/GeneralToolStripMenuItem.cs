@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.Windows.Forms;
-using System.Windows.Media.Imaging;
 
 namespace GlueFormsCore.FormHelpers
 {
+    [DebuggerDisplay("{Text}")]
     public class GeneralToolStripMenuItem
     {
         public GeneralToolStripMenuItem() { }
@@ -18,15 +18,11 @@ namespace GlueFormsCore.FormHelpers
 
         public System.Windows.Controls.Image Image { get; internal set; }
 
-        public List<GeneralToolStripMenuItem> DropDownItems { get; private set; } = new List<GeneralToolStripMenuItem>();
+        public List<GeneralToolStripMenuItem> DropDownItems { get; } = new();
 
         public ToolStripMenuItem ToTsmi()
         {
             var tsmi = new ToolStripMenuItem(Text);
-            //if(Image != null)
-            //{
-            //    tsmi.Image = Image;
-            //}
             tsmi.Click += Click;
             tsmi.ShortcutKeyDisplayString = ShortcutKeyDisplayString;
 
